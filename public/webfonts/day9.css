@@ -1,0 +1,14 @@
+p:nth-child(1){
+backgroung color: aquamarine;}
+a {
+    color: #ff7b0e;
+}
+a:hover{
+    color: #997816;
+}
+a:active{
+    color: #479920;
+}
+a:visited{
+    color: #960b99;
+}
