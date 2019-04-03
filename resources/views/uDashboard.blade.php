@@ -131,13 +131,17 @@ else{
             </div>
         </nav>
 
-        <div class="containter" style="padding: 1.5rem">
-            <a class="btn btn-warning" href="{{url('studentProfile')}}">
+            {{--<a class="btn btn-warning" href="{{url('studentProfile')}}">
                 @if($student)
-                    <?php echo "Your Account is not Active. Please update your profile now. If you did, please wait for admin confirmation." ?>
+                    <p>Your Account is not Active. Please update your profile now. If you did, please wait for admin confirmation.</p>
                 @endif
-            </a>
-        </div>
+            </a>--}}
+
+        <div class="example">Important Notice</div>
+
+        @if($student)
+            <p>Your Account is not Active. Please update your profile now. If you did, please wait for admin confirmation.</p>
+        @endif
 
     @if(session()->has('message'))
             <div class="alert alert-success">
@@ -314,6 +318,29 @@ else{
 
 </div>
 </body>
+
+<style>
+    .wrapper .container-fluid .example {
+        background-color: lightgrey;
+        padding: 10px;
+    }
+    .wrapper .container-fluid .example p{
+        padding: 0.5rem;
+        text-color: red;
+    }
+
+    @media screen and (min-width: 601px) {
+        .wrapper .container-fluid .example {
+            font-size: 20px;
+        }
+    }
+
+    @media screen and (max-width: 600px) {
+        div.example {
+            font-size: 20px;
+        }
+    }
+</style>
 
 <!--   Core JS Files   -->
 <script src="assets/js/jquery.min.js" type="text/javascript"></script>

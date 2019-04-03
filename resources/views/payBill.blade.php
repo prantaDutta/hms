@@ -15,11 +15,10 @@ if($day<=4)
     $setFine = 0;
 else if ($day <=31)
     $setFine = $day * 10 - 40;
-
 $student = DB::table('foods')->groupBy('userID')->where('month' , $previousMonth)->where('year' , $currentYear)->count();
 $refund = $student*40;
 ?>
-<!DOCTYPE html>
+        <!DOCTYPE html>
 <html>
 <head>
     <title>Edit Profile</title>
@@ -135,41 +134,41 @@ $refund = $student*40;
         <div class="form-row">
             <div class="form-group col-md-6 forLeftRight1">
                 <label for="inputGroupSelect01">Month</label>
-            <select class="form-control custom-select" id="inputGroupSelect01" name="month">
-                <option selected value="{{ $currentMonth }}">{{ $currentMonth }}</option>
-                <option value="January">January</option>
-                <option value="February">February</option>
-                <option value="March">March</option>
-                <option value="April">April</option>
-                <option value="May">May</option>
-                <option value="June">June</option>
-                <option value="July">July</option>
-                <option value="August">August</option>
-                <option value="September">September</option>
-                <option value="October">October</option>
-                <option value="November">November</option>
-                <option value="December">December</option>
-                {{--<option value="withPreviousMonth">With Previous Month</option>
-                <option value="withNextMonth">With Next Month</option>--}}
-            </select>
+                <select class="form-control custom-select" id="inputGroupSelect01" name="month">
+                    <option selected value="{{ $currentMonth }}">{{ $currentMonth }}</option>
+                    <option value="January">January</option>
+                    <option value="February">February</option>
+                    <option value="March">March</option>
+                    <option value="April">April</option>
+                    <option value="May">May</option>
+                    <option value="June">June</option>
+                    <option value="July">July</option>
+                    <option value="August">August</option>
+                    <option value="September">September</option>
+                    <option value="October">October</option>
+                    <option value="November">November</option>
+                    <option value="December">December</option>
+                    {{--<option value="withPreviousMonth">With Previous Month</option>
+                    <option value="withNextMonth">With Next Month</option>--}}
+                </select>
             </div>
             <div class="form-group col-md-6 forLeftRight2">
                 <label for="inputGroupSelect01">Year</label>
-            <select class="form-control custom-select" id="inputGroupSelect01" name="year">
-                <option selected value="{{ $currentYear }}">{{ $currentYear }}</option>
-                <option value="2019">2019</option>
-                <option value="2020">2020</option>
-                <option value="2021">2021</option>
-                <option value="2022">2022</option>
-                <option value="2023">2023</option>
-                <option value="2024">2024</option>
-                <option value="2025">2025</option>
-                <option value="2026">2026</option>
-                <option value="2027">2027</option>
-                <option value="2028">2028</option>
-                <option value="2029">2029</option>
-                <option value="2030">2030</option>
-            </select>
+                <select class="form-control custom-select" id="inputGroupSelect01" name="year">
+                    <option selected value="{{ $currentYear }}">{{ $currentYear }}</option>
+                    <option value="2019">2019</option>
+                    <option value="2020">2020</option>
+                    <option value="2021">2021</option>
+                    <option value="2022">2022</option>
+                    <option value="2023">2023</option>
+                    <option value="2024">2024</option>
+                    <option value="2025">2025</option>
+                    <option value="2026">2026</option>
+                    <option value="2027">2027</option>
+                    <option value="2028">2028</option>
+                    <option value="2029">2029</option>
+                    <option value="2030">2030</option>
+                </select>
             </div>
         </div>
         <div class="form-group">

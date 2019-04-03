@@ -21,14 +21,17 @@
                 </ul>
             </div>
         @endif
-
+        <button type="button" id="loginButton" class="btn btn-success pl-5 pr-5">Log Into your account</button>
         <!-- Login Form -->
-        <form method="post" action="{{ url('loginStore') }}">
-            {{ csrf_field() }}
-            <input type="text" id="login" class="fadeIn second" name="username" placeholder="USERNAME" required>
-            <input type="password" id="password" class="fadeIn third" name="password" placeholder="PASSWORD" required>
-            <input type="submit" class="fadeIn fourth" value="Log In">
-        </form>
+        <div id="loginForm">
+            <form method="post" action="{{ url('loginStore') }}">
+                {{ csrf_field() }}
+                <input type="text" id="login" class="fadeIn second" name="username" placeholder="USERNAME" required>
+                <input type="password" id="password" class="fadeIn third" name="password" placeholder="PASSWORD" required>
+                <input type="submit" class="fadeIn fourth" value="Log In">
+            </form>
+        </div>
+
 
         @if(session()->has('message'))
             <div class="alert alert-success">
@@ -41,11 +44,11 @@
             <button class="btn btn-secondary" id="forgot">Forgot Password?</button>
         </div>
 
+
         <form method="post" action="{{ url('forgotPassword') }}">
             {{ csrf_field() }}
             <div class="form-group" id="forgotPasswordForm">
-                <label for="exampleFirstName">Enter Email</label>
-                <input type="text" class="form-control" id="exampleFirstName" name="email">
+                <input type="email" class="form-control fadeIn fifth" placeholder="Enter your Email" id="exampleFirstName" name="email">
                 <button type="submit" class="btn btn-primary">Send me an email</button>
             </div>
         </form>
@@ -161,11 +164,11 @@
         transition: all 0.3s ease-in-out;
     }
 
-    input[type=button]:hover, input[type=submit]:hover, input[type=reset]:hover  {
+    input[type=button]:hover, input[type=submit]:hover, input[type=reset]:hover, input[type=email]:hover  {
         background-color: #39ace7;
     }
 
-    input[type=button]:active, input[type=submit]:active, input[type=reset]:active  {
+    input[type=button]:active, input[type=submit]:active, input[type=reset]:active, input[type=email]:active  {
         -moz-transform: scale(0.95);
         -webkit-transform: scale(0.95);
         -o-transform: scale(0.95);
@@ -173,7 +176,7 @@
         transform: scale(0.95);
     }
 
-    input[type=text], input[type=password] {
+    input[type=text], input[type=password],input[type=email] {
         background-color: #f6f6f6;
         border: none;
         color: #0d0d0d;
@@ -194,12 +197,12 @@
         border-radius: 5px 5px 5px 5px;
     }
 
-    input[type=text]:focus {
+    input[type=text]:focus,  input[type=email]:focus{
         background-color: #fff;
         border-bottom: 2px solid #5fbae9;
     }
 
-    input[type=text]::placeholder {
+    input[type=text]::placeholder, input[type=email]::placeholder {
         color: #cccccc;
     }
 
@@ -287,6 +290,12 @@
         animation-delay: 1s;
     }
 
+    .fadeIn.fifth {
+        -webkit-animation-delay: 1.2s;
+        -moz-animation-delay: 1.2s;
+        animation-delay: 1.2s;
+    }
+
     /* Simple CSS3 Fade-in Animation */
     .underlineHover:after {
         display: block;
@@ -341,7 +350,16 @@
         crossorigin="anonymous"></script>
 
 <script>
-    $('#forgot').on('click', () => {
-        $('#forgotPasswordForm').show();
-    })
+    $( document ).ready(function() {
+        $('#forgot').on('click', () => {
+            $('#loginForm').hide();
+            $('#forgotPasswordForm').show();
+        });
+        $('#loginButton').on('click', () => {
+            $('#loginForm').show();
+            $('#forgotPasswordForm').hide();
+        });
+    });
+
+
 </script>

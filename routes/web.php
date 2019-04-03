@@ -10,6 +10,8 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+use App\Food;
 use App\students;
 use App\Payment;
 use Illuminate\Support\Facades\DB;
@@ -85,10 +87,13 @@ Route::group(['middleware' => 'studentloggedin'], function(){
     Route::get('/cancelFood', function () {
         $value = Session::get('studentID');
         $t = students::find($value);
-        return view('cancelFood',['t'=>$t]);
+        $data = Food::all();
+        return view('cancelFood',['t'=>$t],['foods'=>$data]);
     });
 
     Route::post('/cancellingFood/{id}','ProjectController@cancellingFood');
+
+    Route::get('/getDayValue/{id}','ProjectController@getDayValue');
 
     Route::get('/paymentDetailsCheck/downloadPDF/{id}','ProjectController@downloadPDF');
 
@@ -104,6 +109,9 @@ Route::get('home','ProjectController@home');
 
 Route::post('forgotPassword','ProjectController@forgotPassword');
 
+Route::get('confirmPassword/{id}','ProjectController@confirmPassword');
+
+Route::post('confirmPassword/passwordChange/{id}','ProjectController@passwordChange');
 
 Route::get('services','ProjectController@services');
 
@@ -118,5 +126,6 @@ Route::get('logOut','ProjectController@logout')->name('logOut');
 Route::get('login','ProjectController@login')->name('login');
 
 Route::post('loginStore','ProjectController@loginStore');
+
 
 

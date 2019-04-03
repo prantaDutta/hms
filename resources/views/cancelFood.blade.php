@@ -14,6 +14,9 @@ $hour = $current->hour;
 $currentYear = $current->year;
 $currentMonth = $current->format('F');
 $previousMonth = $current->subMonth()->format('F');
+$d = $current->daysInMonth;
+$toCalculateDay = Carbon::now()->setTimezone('Asia/Dhaka');
+$dToCalculate = $toCalculateDay->daysInMonth;
 /*$start = new Carbon('first day of this month');
 $end = $start = new Carbon('last day of this month');
 $states = $start->setDate();
@@ -154,7 +157,7 @@ echo $meal;*/
 
                 <option value="{{ $day }}">Today</option>
                 <option value="{{ $nextDay }}">Tomorrow</option>
-                @for($d=0; $d<=30; $d++)
+                @for($d=1; $d<=$dToCalculate; $d++)
                     <?php
                         {
                         $time=mktime(12, 0, 0, date('m'), $d, date('Y'));
@@ -162,7 +165,7 @@ echo $meal;*/
                         $list[]=date('Y-m-d', $time);
                         }
                     ?>
-                    @if(($d+1) != $day && ($d+1)!=$nextDay)
+                    @if(($d+1) != $day && ($d+1)!=$nextDay && $d >= $day)
                         <option value="{{ $list[$d] }}">{{ $list[$d] }} {{ $currentMonth }} {{ $currentYear }}</option>
                     @endif
                 @endfor
@@ -207,12 +210,50 @@ $.notify({
         integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
         crossorigin="anonymous"></script>
 
-<script type="text/javascript">
-    $("#day").change(function () {
-        var end = this.value;
-        var firstDropVal = $('#meal').val();
+{{--<script type="text/javascript">
+    $(document).ready(function () {
+        $("#day").change(function () {
+            var selectDay = $('#day').val();
+            $.ajax({
+                url: "/getDayValue/"+selectDay,
+                type: "GET",
+                //data: data,
+                dataType : "json",
+                success: function (data) {
+                    console.
+
+                    /*var temp = data;
+                    $('#meal').empty();
+                    alert(data);
+                    $.each(data, function (i,obj) {
+
+                    })*/
+                }
+            });
+
+        });
     });
-</script>
+</script>--}}
+
+{{--<script>
+    $(document).ready(function () {
+        $('#day').change(function () {
+            if ($(this).val()!=''){
+                var select = $(this.attr("id"));
+                var value = $(this).val();
+                var dependent = $(this).data('dependent');
+                $.ajax({
+                    url: "/getDayValue/"+selectDay,
+                    method: "GET",
+                    data: {select:select, value: value, dependent: dependent},
+                    success::function (result) {
+
+                    }
+                })
+            }
+        })
+    })
+</script>--}}
     <!--Start of Tawk.to Script-->
 <script type="text/javascript">
 var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();

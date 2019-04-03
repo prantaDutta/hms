@@ -6,10 +6,11 @@ use App\Food;
 use App\Payment;
 use App\students;
 use Barryvdh\DomPDF\Facade as PDF;
+use function GuzzleHttp\Psr7\str;
+use Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
-use Session;
 use Intervention\Image\Facades\Image as Image;
 use Faker\Generator as Faker;
 use Illuminate\Support\Facades\Hash;
@@ -139,7 +140,14 @@ class ProjectController extends Controller
     {
         $username = $faker->unique()->userName;
         $password = md5('123456');
-        $rememberToken = $faker->unique()->asciify('********************');
+        $rememberToken = str_random(20);
+        do
+        {
+            $user_code = students::where('rememberToken', $rememberToken)->first();
+        }
+        while(!empty($user_code));
+
+        echo $rememberToken;
 
         $obj = new students();
         $obj->username = $username;
@@ -300,8 +308,8 @@ class ProjectController extends Controller
         if ($meal != 'Dinner' && $meal != 'Lunch')
             return Redirect::back()->withErrors(['Your Meal value is invalid']);
 
-        $findMeal = DB::table('foods')->where('userID',$id)->where('meal',$meal)->first();
-        //echo $findMeal->meal;
+        $findMeal = DB::table('foods')->where('userID',$id)->where('day',$currentDay)->where('month',$currentMonth)->where('year',$currentYear)->where('meal',$meal)->first();
+
         if ($findMeal){
             if ($findMeal->meal == 'Lunch')
                 return Redirect::back()->withErrors(['You already cancelled Lunch.']);
@@ -441,12 +449,62 @@ class ProjectController extends Controller
             Mail::send('forgotPassword',$data = [
                 'token' => $checkEmail->rememberToken,
                 ],function($message) use($email){
-                $message->to($email,'To User')->subject('Payment Mail');
+                $message->to($email,'To User')->subject('Forgot Password Email');
                 $message->from('prantadutta1997@gmail.com','Pranta Dutta');
             });
             return redirect()->back()->with('message', 'Email Successfully delivered.');
         }
         else
             return redirect()->back()->with('message', 'Email does not exist.');
+    }
+
+    public function confirmPassword(Faker $faker, $id){
+        $check = DB::table('students')->where('rememberToken',$id)->first();
+        if ($check){
+            $rememberToken = str_random(20);
+            do
+            {
+                $user_code = students::where('rememberToken', $rememberToken)->first();
+            }
+            while(!empty($user_code));
+            DB::table('students')->where('id', $id)->update(['rememberToken' => $rememberToken]);;
+            return view('changePassword',['t'=>$check]);
+        }
+        else{
+            return redirect('login')->with('message','Something Went Wrong');
+        }
+    }
+
+    public function passwordChange(Request $request,$id){
+        $student = students::find($id);
+        $password = $request->input('password');
+        $confirmPassword = $request->input('confirmPassword');
+        if($password == $confirmPassword){
+            $password = md5($password);
+            $student->password = $password;
+            $student->save();
+            Session::put('studentID',$student->id);
+            Session::put('studentUsername',$student->username);
+            return redirect('uDashboard');
+        }
+        else
+            return redirect()->back()->with('message','Passwords do not match');
+    }
+    public function getDayValue($id){
+        $current = Carbon::now('Asia/Dhaka');
+        $currentYear = $current->year;
+        //$currentDay = $current->day;
+        $currentMonth = $current->format('F');
+        $value = Session::get('studentID');
+
+        $data = DB::table('foods')->where('userID',$value)->where('day',$id)->where('month',$currentMonth)->where('year',$currentYear)->get();
+        echo $data->meal;
+        return response()->json([
+            'error' => false,
+            'mydata' => $data,
+        ], 200);
+    }
+    public function index(){
+
     }
 }
