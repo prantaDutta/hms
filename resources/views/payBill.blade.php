@@ -18,7 +18,7 @@ else if ($day <=31)
 $student = DB::table('foods')->groupBy('userID')->where('month' , $previousMonth)->where('year' , $currentYear)->count();
 $refund = $student*40;
 ?>
-        <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <title>Edit Profile</title>
@@ -174,7 +174,7 @@ $refund = $student*40;
         <div class="form-group">
             <label for="exampleBirthDate">Amount to pay</label>
             {{--<input type="text" class="form-control" id="exampleBirthDate" name="amount">--}}
-            <select class="form-control custom-select" id="inputGroupSelect01" name="amount">
+            <select class="form-control custom-select" id="amount" name="amount">
                 <option selected value="">Choose...</option>
                 <option value="1">Pay 3000tk. for One Month</option>
                 <option value="2">Pay 6300 + due fine for Two Months(For Previous Month + Current Month)</option>
@@ -183,11 +183,15 @@ $refund = $student*40;
         </div>
         <div class="form-group">
             <label for="exampleInputEmail1">Due Fine</label>
-            <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" value="{{ $setFine }}" name="dueFine" readonly>
+            <input type="text" class="form-control" id="dueFine" aria-describedby="emailHelp" value="{{ $setFine }}" name="dueFine" readonly>
         </div>
         <div class="form-group">
             <label for="exampleInputEmail1">Refund</label>
-            <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" value="{{ $refund }}" name="refund" readonly>
+            <input type="text" class="form-control" id="refund" aria-describedby="emailHelp" value="{{ $refund }}" name="refund" readonly>
+        </div>
+        <div class="form-group">
+            <label for="exampleInputEmail1">Amount</label>
+            <input type="text" class="form-control" id="chooseAmount" aria-describedby="emailHelp" value="" name="chooseAmount" readonly>
         </div>
         <div class="form-group">
             <label for="exampleInputEmail1">Payment Method</label>
@@ -216,8 +220,6 @@ $refund = $student*40;
     </form>
 </div>
 
-
-
 </body>
 </html>
 <style>
@@ -230,6 +232,36 @@ $refund = $student*40;
         padding-left:  1rem;
     }
 </style>
+
+<script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#amount").change(function () {
+            var amount = $('#amount').val();
+            var setFine = $('#dueFine').val();
+            var refund = $('#refund').val();
+
+            var setFine = parseInt(setFine,10);
+            var refund = parseInt(refund,10);
+
+            if (amount == 1)
+                var chooseAmount = 3000 + setFine + refund;
+            else if (amount == 2)
+                var chooseAmount = 6300 + setFine + refund;
+            else if (amount == 3)
+                var chooseAmount = 6000 + setFine + refund;
+
+            //console.log(chooseAmount);
+            //$("#chooseAmount").append(chooseAmount);
+            //$('#chooseAmount').val(chooseAmount);
+            document.getElementById("chooseAmount").value = chooseAmount.toString();
+        });
+    });
+</script>
 <!--Start of Tawk.to Script-->
 <script type="text/javascript">
     var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();

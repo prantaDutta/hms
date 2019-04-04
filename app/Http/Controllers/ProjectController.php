@@ -70,7 +70,7 @@ class ProjectController extends Controller
             }
         }
         else{
-            echo 'Oops, You entered wrong username or password combination';
+            return redirect()->back()->withErrors(['Something Went Wrong. Please Try Again']);
         }
     }
     public function update(Request $request, $id){
@@ -136,7 +136,7 @@ class ProjectController extends Controller
             return redirect('studentProfile');
         }
         else
-            echo "You need to enter your password correctly.";
+            return redirect()->back()->withErrors(['Something Went Wrong. Please Try Again']);
     }
     public function newUserStore(Faker $faker)
     {
@@ -149,7 +149,7 @@ class ProjectController extends Controller
         }
         while(!empty($user_code));
 
-        echo $rememberToken;
+        //echo $rememberToken;
 
         $obj = new students();
         $obj->username = $username;
@@ -172,7 +172,7 @@ class ProjectController extends Controller
             $message->to($email,'To User')->subject('Test Mail');
             $message->from('prantadutta1997@gmail.com','Pranta Dutta');
         });
-        echo "Mail Successfully Delivered.";
+        return redirect()->back()->with(['msg','Email Successfully Delivered.']);
     }
 
     public function sendSMS(Request $req){
@@ -189,7 +189,7 @@ class ProjectController extends Controller
             'from' => 'HMS',
             'text' => 'Your username is '.$last->username.' and password is 123456. Please change your password to activate your account. Thank you.',
         ]);
-        echo "message successfully delivered.";
+        return redirect()->back()->with(['msg','Message Successfully Delivered.']);
     }
 
     public function editStudent(Request $request){
@@ -205,6 +205,7 @@ class ProjectController extends Controller
         return redirect('home');
     }
     public function payBill(Request $request,Faker $faker, $id){
+        $chooseAmount = $request->input('chooseAmount');
         $currentforDay = Carbon::now('Asia/Dhaka');
         $day = $currentforDay->day;
         $currentMonth = $currentforDay->month;
@@ -244,7 +245,7 @@ class ProjectController extends Controller
         $name = $firstname." ".$lastname;
         $month = $request->input( 'month' );
         $year  = $request->input( 'year' );
-        $amount  = $request->input( 'amount' );
+        $checkAmount  = $request->input( 'amount' );
         $dueFine  = $request->input( 'dueFine' );
         $refund = $request->input('refund');
         $mobileNo  = $request->input( 'mobileNo' );
@@ -252,26 +253,30 @@ class ProjectController extends Controller
         $trxID  = $request->input( 'trxID' );
         $email = $student->email;
 
-        if($amount==1){
+        if($checkAmount==1){
             $amount = 3000 + $dueFine - $refund;
         }
-        else if ($amount == 2){
+        else if ($checkAmount == 2){
             $amount = 6000 + 300 + $dueFine - $refund;
             $month = $currentMonthName." + ".$previousMonthName;
         }
-        else if ($amount ==3) {
+        else if ($checkAmount ==3) {
             $amount = 6000 + $dueFine - $refund;
             $month = $currentMonthName." + ".$nextMonthName;
         }
 
         if ($setFine != $dueFine)
-            return redirect()->back()->with('message', 'Something Went Wrong. Please Try Again.');
+            return redirect()->back()->withErrors(['Something Went Wrong. Please Try Again']);
 
         $student = DB::table('foods')->groupBy('userID')->where('month' , $previousMonthName)->where('year' , $year)->count();
         $checkRefund = $student*40;
 
         if($checkRefund != $refund)
-            return redirect()->back()->with('message', 'Something Went Wrong. Please Try Again.');
+            return redirect()->back()->withErrors(['Something Went Wrong. Please Try Again']);
+
+        if ($chooseAmount != $amount)
+            return redirect()->back()->withErrors(['Something Went Wrong. Please Try Again']);
+
 
         $obj = new Payment();
         $obj->paymentID = $faker->unique()->numberBetween('111111','999999');
@@ -457,7 +462,7 @@ class ProjectController extends Controller
             return redirect()->back()->with('message', 'Email Successfully delivered.');
         }
         else
-            return redirect()->back()->with('message', 'Email does not exist.');
+            return redirect()->back()->withErrors(['Something Went Wrong. Please Try Again']);
     }
 
     public function confirmPassword(Faker $faker, $id){
@@ -473,7 +478,7 @@ class ProjectController extends Controller
             return view('changePassword',['t'=>$check]);
         }
         else{
-            return redirect('login')->with('message','Something Went Wrong');
+            return redirect('login')->withErrors(['Something Went Wrong. Please Try Again']);
         }
     }
 
@@ -512,10 +517,10 @@ class ProjectController extends Controller
         $endDate = $request->input('endDate');
         $startDateMeal = $request->input('startDateMeal');
         $endDateMeal = $request->input('endDateMeal');
-        /*$validatedData = $request->validate([
+        $validatedData = $request->validate([
             'startDate' => 'date|after_or_equal:today',
             'endDate' => 'date|after_or_equal:tomorrow',
-        ]);*/
+        ]);
 
         $period = CarbonPeriod::create($startDate, $endDate);
         foreach ($period as $newDate) {
@@ -530,7 +535,7 @@ class ProjectController extends Controller
             }
         }
 
-        /*$leave = new Leave();
+        $leave = new Leave();
         $leave->userID = $id;
         $leave->startDate = $startDate;
         $leave->endDate = $endDate;
@@ -687,11 +692,8 @@ class ProjectController extends Controller
                 }
             }
             else
-                return redirect()->back()->with('message', 'Something Went Wrong. Please Try Again');
+                return redirect()->back()->withErrors(['Something Went Wrong. Please Try Again']);
         }
-        return redirect()->back()->with('message', 'Request Accepted and All of Your Meals have been Cancelled.');*/
+        return redirect()->back()->with('message', 'Request Accepted and All of Your Meals have been Cancelled.');
     }
-
-
-
 }
