@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Food;
+use App\Leave;
 use App\Payment;
 use App\students;
 use Barryvdh\DomPDF\Facade as PDF;
+use Carbon\CarbonPeriod;
 use function GuzzleHttp\Psr7\str;
 use Session;
 use Illuminate\Http\Request;
@@ -504,7 +506,192 @@ class ProjectController extends Controller
             'mydata' => $data,
         ], 200);
     }
-    public function index(){
+    public function leaveRequest(Request $request,$id)
+    {
+        $startDate = $request->input('startDate');
+        $endDate = $request->input('endDate');
+        $startDateMeal = $request->input('startDateMeal');
+        $endDateMeal = $request->input('endDateMeal');
+        /*$validatedData = $request->validate([
+            'startDate' => 'date|after_or_equal:today',
+            'endDate' => 'date|after_or_equal:tomorrow',
+        ]);*/
 
+        $period = CarbonPeriod::create($startDate, $endDate);
+        foreach ($period as $newDate) {
+            $checkMeal = DB::table('foods')->where('userID',$id)->where('day',$newDate->day)->where('month',$newDate->format('F'))->where('year',$newDate->year)->first();
+            if ($checkMeal){
+                if ($checkMeal->meal == 'Lunch'){
+                    return Redirect::back()->withErrors(['You already cancelled Lunch.']);
+                }
+                if ($checkMeal->meal == 'Dinner'){
+                    return Redirect::back()->withErrors(['You already cancelled Dinner.']);
+                }
+            }
+        }
+
+        /*$leave = new Leave();
+        $leave->userID = $id;
+        $leave->startDate = $startDate;
+        $leave->endDate = $endDate;
+        if ($leave->save()) {
+            $period = CarbonPeriod::create($startDate, $endDate);
+            if ($startDateMeal == "Lunch" && $endDateMeal == "Dinner") {
+                foreach ($period as $newDate) {
+                    $date = Carbon::parse($newDate);
+                    $day = $date->day;
+                    $month = $date->format('F');
+                    $year = $date->year;
+                    $foods = new Food();
+                    $foods->userID = $id;
+                    $foods->day = $day;
+                    $foods->month = $month;
+                    $foods->year = $year;
+                    $foods->meal = "Lunch";
+                    $foods->save();
+
+                    $foods = new Food();
+                    $foods->userID = $id;
+                    $foods->day = $day;
+                    $foods->month = $month;
+                    $foods->year = $year;
+                    $foods->meal = "Dinner";
+                    $foods->save();
+                }
+
+            }
+            elseif ($startDateMeal == "Dinner" && $endDateMeal == "Lunch") {
+                $date = Carbon::parse($startDate);
+                $day = $date->day;
+                $month = $date->format('F');
+                $year = $date->year;
+                $foods = new Food();
+                $foods->userID = $id;
+                $foods->day = $day;
+                $foods->month = $month;
+                $foods->year = $year;
+                $foods->meal = "Dinner";
+                $foods->save();
+                $newPeriod = CarbonPeriod::create($startDate, $endDate);
+
+                $count = 0;
+                foreach ($newPeriod as $newDate) {
+                    if ($count == 0) {
+                        $count++;
+                        continue;
+                    }
+                    $date = Carbon::parse($newDate);
+                    $day = $date->day;
+                    $month = $date->format('F');
+                    $year = $date->year;
+
+                    $foods = new Food();
+                    $foods->userID = $id;
+                    $foods->day = $day;
+                    $foods->month = $month;
+                    $foods->year = $year;
+                    $foods->meal = "Lunch";
+                    $foods->save();
+
+                    $foods = new Food();
+                    $foods->userID = $id;
+                    $foods->day = $day;
+                    $foods->month = $month;
+                    $foods->year = $year;
+                    $foods->meal = "Dinner";
+                    $foods->save();
+                }
+
+            }
+            elseif ($startDateMeal == "Lunch" && $endDateMeal == "Lunch") {
+                $newPeriod = CarbonPeriod::create($startDate, $endDate);
+
+                //$count = 0;
+                foreach ($newPeriod as $newDate) {
+                    $toEnd = Carbon::parse($endDate);
+                    if ($toEnd->day == $newDate->day) {
+                        continue;
+                    }
+                    $date = Carbon::parse($newDate);
+                    $day = $date->day;
+                    $month = $date->format('F');
+                    $year = $date->year;
+
+                    $foods = new Food();
+                    $foods->userID = $id;
+                    $foods->day = $day;
+                    $foods->month = $month;
+                    $foods->year = $year;
+                    $foods->meal = "Lunch";
+                    $foods->save();
+
+                    $foods = new Food();
+                    $foods->userID = $id;
+                    $foods->day = $day;
+                    $foods->month = $month;
+                    $foods->year = $year;
+                    $foods->meal = "Dinner";
+                    $foods->save();
+                }
+                $date = Carbon::parse($endDate);
+                $day = $date->day;
+                $month = $date->format('F');
+                $year = $date->year;
+                $foods = new Food();
+                $foods->userID = $id;
+                $foods->day = $day;
+                $foods->month = $month;
+                $foods->year = $year;
+                $foods->meal = "Lunch";
+                $foods->save();
+            }
+            elseif ($startDateMeal == "Dinner" && $endDateMeal == "Dinner") {
+                $newPeriod = CarbonPeriod::create($startDate, $endDate);
+                $date = Carbon::parse($startDate);
+                $day = $date->day;
+                $month = $date->format('F');
+                $year = $date->year;
+                $foods = new Food();
+                $foods->userID = $id;
+                $foods->day = $day;
+                $foods->month = $month;
+                $foods->year = $year;
+                $foods->meal = "Dinner";
+                $foods->save();
+                $count = 0;
+                foreach ($newPeriod as $newDate) {
+                    if ($count == 0) {
+                        $count++;
+                        continue;
+                    }
+                    $date = Carbon::parse($newDate);
+                    $day = $date->day;
+                    $month = $date->format('F');
+                    $year = $date->year;
+
+                    $foods = new Food();
+                    $foods->userID = $id;
+                    $foods->day = $day;
+                    $foods->month = $month;
+                    $foods->year = $year;
+                    $foods->meal = "Lunch";
+                    $foods->save();
+
+                    $foods = new Food();
+                    $foods->userID = $id;
+                    $foods->day = $day;
+                    $foods->month = $month;
+                    $foods->year = $year;
+                    $foods->meal = "Dinner";
+                    $foods->save();
+                }
+            }
+            else
+                return redirect()->back()->with('message', 'Something Went Wrong. Please Try Again');
+        }
+        return redirect()->back()->with('message', 'Request Accepted and All of Your Meals have been Cancelled.');*/
     }
+
+
+
 }

@@ -102,6 +102,14 @@ Route::group(['middleware' => 'studentloggedin'], function(){
         $t = students::find($value);
         return view('help',['t'=>$t]);
     });
+
+    Route::get('/leave', function () {
+        $value = Session::get('studentID');
+        $t = students::find($value);
+        return view('leave',['t'=>$t]);
+    });
+
+    Route::post('/leaveRequest/{id}','ProjectController@leaveRequest');
 });
 
 

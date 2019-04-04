@@ -38,7 +38,11 @@ if ($pay){
 else{
     $dueMonth = $currentMonth;
 }
-
+$leave = DB::table('leaves')->where('userID',$value)->latest()->first();
+if ($leave)
+    $lastLeave = $leave->updated_at;
+else
+    $lastLeave = 'Never';
 ?>
 <!doctype html>
 <html lang="en">
@@ -137,10 +141,8 @@ else{
                 @endif
             </a>--}}
 
-        <div class="example">Important Notice</div>
-
         @if($student)
-            <p>Your Account is not Active. Please update your profile now. If you did, please wait for admin confirmation.</p>
+            <p style="color: red;">Your Account is not Active. Please update your profile now. If you did, please wait for admin confirmation.</p>
         @endif
 
     @if(session()->has('message'))
@@ -151,7 +153,7 @@ else{
         <div class="content m-5">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-lg-3 col-sm-6">
+                    <div class="col-lg-4 col-sm-6">
                         <div class="card">
                             <div class="content">
                                 <div class="row">
@@ -170,13 +172,13 @@ else{
                                 <div class="footer">
                                     <hr />
                                     <div class="stats">
-                                        <i class="ti-reload"></i> Last Updated on {{ $student->updated_at }}
+                                        <i class="ti-reload"></i>    Last Updated on {{ $student->updated_at }}
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-sm-6">
+                    <div class="col-lg-4 col-sm-6">
                         <div class="card">
                             <div class="content">
                                 <div class="row">
@@ -195,13 +197,13 @@ else{
                                 <div class="footer">
                                     <hr />
                                     <div class="stats">
-                                        <i class="ti-calendar"></i> Last Paid on {{ $lastPay }}
+                                        <i class="ti-calendar"></i>    Last Paid on {{ $lastPay }}
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-sm-6">
+                    <div class="col-lg-4 col-sm-6">
                         <div class="card">
                             <div class="content">
                                 <div class="row">
@@ -220,19 +222,19 @@ else{
                                 <div class="footer">
                                     <hr />
                                     <div class="stats">
-                                        <i class="ti-timer"></i>Last Cancelled on {{ $lastCancel }}
+                                        <i class="ti-timer"></i>   Last Cancelled on {{ $lastCancel }}
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-sm-6">
+                    <div class="col-lg-4 col-sm-6">
                         <div class="card">
                             <div class="content">
                                 <div class="row">
                                     <div class="col-xs-5">
                                         <div class="icon-big icon-info text-center">
-                                            <i class="fas fa-users"></i>
+                                            <i class="fab fa-google-wallet"></i>
                                         </div>
                                     </div>
                                     <div class="col-xs-7">
@@ -245,13 +247,38 @@ else{
                                 <div class="footer">
                                     <hr />
                                     <div class="stats">
-                                        <i class="ti-reload"></i> Due Month : {{ $dueMonth }}
+                                        <i class="ti-reload"></i>    Due Month : {{ $dueMonth }}
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-sm-6">
+                    <div class="col-lg-4 col-sm-6">
+                        <div class="card">
+                            <div class="content">
+                                <div class="row">
+                                    <div class="col-xs-5">
+                                        <div class="icon-big icon-info text-center">
+                                            <i class="fas fa-sign-out-alt"></i></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-7">
+                                        <div class="numbers">
+                                            <p>Request For Leave</p>
+                                            <a class="badge badge-danger" href="leave">Request Now</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="footer">
+                                    <hr />
+                                    <div class="stats">
+                                        <i class="ti-reload"></i> Last requested on {{ $lastLeave }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-sm-6">
                         <div class="card">
                             <div class="content">
                                 <div class="row">
@@ -270,7 +297,7 @@ else{
                                 <div class="footer">
                                     <hr />
                                     <div class="stats">
-                                        <i class="ti-reload"></i> Click Chat Icon
+                                        <i class="ti-reload"></i>     Click Chat Icon on the bottom right
                                     </div>
                                 </div>
                             </div>
