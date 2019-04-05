@@ -505,7 +505,7 @@ class ProjectController extends Controller
         $value = Session::get('studentID');
 
         $data = DB::table('foods')->where('userID',$value)->where('day',$id)->where('month',$currentMonth)->where('year',$currentYear)->get();
-        echo $data->meal;
+        //echo $data->meal;
         return response()->json([
             'error' => false,
             'mydata' => $data,
