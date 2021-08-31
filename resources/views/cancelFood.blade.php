@@ -172,11 +172,12 @@ $end = new Carbon('last day of last month');
         </div>
 
 
-        <?php /*echo $checkMeal[0]->meal; */?>
+
+        <?php /*echo $countCheckMeal;*/ ?>
         <div class="form-group">
             <label for="inputGroupSelect01">Cancel Meal</label>
             <select class="form-control custom-select meal" id="meal" name="meal">
-                <option selected>Please Choose...</option>
+
                 @if($countCheckMeal == 1 && $hour < 7)
                     @if ($checkMeal[0]->meal == 'Lunch')
                         <option value="Dinner">Cancel Dinner</option>
@@ -186,15 +187,18 @@ $end = new Carbon('last day of last month');
                 @elseif ($countCheckMeal == 1 && $hour < 17)
                     @if ($checkMeal[0]->meal == 'Lunch')
                         <option value="Dinner">Cancel Dinner</option>
+                    @elseif ($checkMeal[0]->meal == 'Dinner')
+                            <option selected disabled>Already Cancelled or Too Late</option>
                     @endif
                 @elseif($countCheckMeal == 2)
-                    <option disabled>You already cancelled Lunch and Dinner</option>
+                    <option selected disabled>You already cancelled Lunch and Dinner</option>
                 @else
                     @if($hour > 7)
                         <option value="Dinner">Cancel Dinner</option>
                     @elseif ($hour > 17)
-                        <option disabled="">Too Late to cancel.</option>
+                        <option disabled="">Too Late to cancel</option>
                     @else
+                        <option selected>Please Choose...</option>
                         <option value="Lunch">Cancel Lunch</option>
                         <option value="Dinner">Cancel Dinner</option>
                         @endif
@@ -202,7 +206,20 @@ $end = new Carbon('last day of last month');
             </select>
         </div>
 
+        {{--<div class="form-group">
+            <label for="inputGroupSelect01">Cancel Meal</label>
+            <select class="form-control custom-select meal" id="forMeal" name="meal">
+                <option selected disabled>Please Choose</option>
+                <option value="Lunch">Lunch</option>
+                <option value="Dinner">Dinner</option>
+            </select>
 
+        </div>--}}
+    <style>
+        #forMeal{
+            display: none;
+        }
+    </style>
 
         <button type="submit" class="btn btn-primary">Cancel</button>
     </form>
@@ -272,6 +289,7 @@ $.notify({
         var month = d.getMonth();
         var year = d.getFullYear();
         var day = d.getDate();
+        var hour = d.getHours();
 
 
         selectYear.val(year);
@@ -304,9 +322,10 @@ $.notify({
         var yearValue = $('#year').val();
         var $change = $("#day, #month, #year");
 
-        /*$($change).change(function () {
+        $($change).change(function () {
             $("#meal").empty();
             $("day").append(dayValue);
+            var dayValue = $('#day').val();
             var checkMonthValue = parseInt(monthValue,'10');
             var newMonthValue = checkMonthValue + 1;
 
@@ -316,11 +335,92 @@ $.notify({
                 //data : mydata,
                 dataType: "json",
                 success:function (data) {
-                    //console.log(data.meal);
+                    var arr = data.mydata;
+                    let count = 0;
+                    for (var c in data.mydata) {
+                        count = count + 1;
+                    }
+                    //alert(typeof data.mydata[0].meal);
+                    var lunch = 'Lunch';
+                    var dinner = 'Dinner';
+
+                    //if (toCheckMeal === undefined){
+                        if ((count === 1) && (hour < 7)){
+                            var toCheckMeal = data.mydata[0].meal;
+                            if (toCheckMeal === lunch)
+                            {
+                                $('#meal').append(
+                                    $('<option />')
+                                        .text(dinner)
+                                        .val(dinner)
+                                );
+                            }
+                            else if (toCheckMeal === dinner){
+                                var option = $('<option/>');
+                                option.attr({ 'value': lunch }).text(lunch);
+                                $('#meal').append(option);
+                            }
+                        }
+                        else if ((count ===1) && (hour < 17)){
+                            var toCheckMeal = data.mydata[0].meal;
+                            if (toCheckMeal === lunch){
+                                var option = $('<option/>');
+                                option.attr({ 'value': dinner }).text(dinner);
+                                $('#meal').append(option);
+                            }
+                            else if (toCheckMeal === dinner){
+                                var option = $('<option/>');
+                                option.attr({ 'value': '' }).text('Already Cancelled or Too Late').attr('disabled', 'disabled').attr("selected","selected");
+                                $('#meal').append(option);
+                            }
+                        }
+                        else if (count === 2){
+                            var option = $('<option/>');
+                            option.attr({ 'value': '' }).text('Already Cancelled Lunch and Dinner').attr('disabled', 'disabled').attr("selected","selected");
+                            $('#meal').append(option);
+                        }
+                        else{
+                            if (hour > 7){
+                                var option = $('<option/>');
+                                option.attr({ 'value': dinner }).text(dinner);
+                                $('#meal').append(option);
+                            }
+                            else if(hour >17){
+                                var option = $('<option/>');
+                                option.attr({ 'value': '' }).text('Too Late to Cancel').attr('disabled', 'disabled').attr("selected","selected");
+                                $('#meal').append(option);
+                            }
+                            else {
+                                $('#meal').append(
+                                    $('<option />')
+                                        .text('Please Choose...')
+                                        .val(''),
+                                    $('<option />')
+                                        .text(lunch)
+                                        .val(lunch),
+                                    $('<option />')
+                                        .text(dinner)
+                                        .val(dinner),
+                                );
+                            }
+                        }
+                    //}
+                    /*else {
+                        $('#meal').append(
+                            $('<option />')
+                                .text('Please Choose')
+                                .val(dinner),
+                            $('<option />')
+                                .text(lunch)
+                                .val(lunch),
+                            $('<option />')
+                                .text(dinner)
+                                .val(dinner),
+                        );
+                    }*/
                 }
             })
-            //console.log(dayValue);
-        })*/
+        })
     });
 </script>
     <!--Start of Tawk.to Script-->
